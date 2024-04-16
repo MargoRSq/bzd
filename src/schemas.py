@@ -1,4 +1,5 @@
 import enum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -8,6 +9,17 @@ class ToolEnum(str, enum.Enum):
     screwdriver = 'screwdriver'
     saw = 'saw'
     claw_hammer = 'claw_hammer'
+
+
+def create_dynamic_literal(*values):
+    """Создает тип Literal динамически."""
+    return Literal[*values]
+
+
+# Пример использования
+Color = create_dynamic_literal(
+    'Кирпичная кладка, оштукатуренная с двух сторон', 'green', 'blue'
+)
 
 
 class Multiplier(str, enum.Enum):
@@ -32,5 +44,5 @@ class FirstElement(BaseModel):
 
 
 class SelectForm(BaseModel):
-    material: ToolEnum = Field(title='Вид материала')
+    material: Color = Field(title='Вид материала')
     mn: Multiplier = Field(title='Толщина')

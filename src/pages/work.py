@@ -20,8 +20,7 @@ router = APIRouter()
 @router.get('/forms/first', response_model=FastUI, response_model_exclude_none=True)
 def first_form():
     return [
-        c.Heading(text='Login Form', level=2),
-        c.Paragraph(text='Simple login form with email and password.'),
+        c.Heading(text='Введите параметры', level=3, class_name='pb-3'),
         c.ModelForm(
             model=SelectForm,
             display_mode='default',
@@ -79,24 +78,21 @@ async def generate_image(form: Annotated[SelectForm, fastui_form(SelectForm)]):
                     width='50%',
                 ),
                 c.Image(src='/static/generated_graph.png', width='50%'),
-            ]
+            ],
         ),
-        c.Button(
-            text='Обратно',
-            on_click=PageEvent(
-                name='change-form',
-                push_path='/work/first',
-                context={'kind': 'first'},
-            ),
+        c.Div(
+            components=[
+                c.Button(
+                    text='Обратно',
+                    on_click=PageEvent(
+                        name='change-form',
+                        push_path='/work/first',
+                        context={'kind': 'first'},
+                    ),
+                ),
+            ],
+            class_name='d-flex justify-content-center pt-3 ',
         ),
-        # c.Heading(text='Выберите следующий график', level=3),
-        # c.ModelForm(
-        #     model=SelectForm,
-        #     display_mode='default',
-        #     submit_url='/api/generate-image',
-        #     method='POST',
-        #     submit_on_change=True,
-        # ),
     ]
 
 

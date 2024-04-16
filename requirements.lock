@@ -49,11 +49,15 @@ kiwisolver==1.4.5
     # via matplotlib
 macholib==1.16.3
     # via pyinstaller
+markdown-it-py==3.0.0
+    # via rich
 markupsafe==2.1.5
     # via jinja2
     # via werkzeug
 matplotlib==3.8.4
     # via bzd
+mdurl==0.1.2
+    # via markdown-it-py
 nuitka==2.1.4
     # via bzd
 numpy==1.26.4
@@ -73,6 +77,8 @@ pydantic==2.6.4
     # via fastui
 pydantic-core==2.16.3
     # via pydantic
+pygments==2.17.2
+    # via rich
 pyinstaller==6.5.0
     # via bzd
 pyinstaller-hooks-contrib==2024.3
@@ -82,6 +88,8 @@ pyparsing==3.1.2
 python-dateutil==2.9.0.post0
     # via matplotlib
 python-multipart==0.0.9
+    # via bzd
+rich==13.7.1
     # via bzd
 setuptools==69.2.0
     # via pyinstaller

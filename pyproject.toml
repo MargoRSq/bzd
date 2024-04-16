@@ -12,6 +12,7 @@ dependencies = [
     "flask>=3.0.2",
     "numpy>=1.26.4",
     "matplotlib>=3.8.4",
+    "rich>=13.7.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
@@ -32,3 +33,22 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]

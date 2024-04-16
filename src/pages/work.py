@@ -1,5 +1,4 @@
 import json
-import os
 from typing import Annotated
 
 from fastapi import APIRouter
@@ -11,6 +10,7 @@ from fastui.forms import fastui_form
 from matplotlib import pyplot as plt
 from pydantic import TypeAdapter
 
+from src import data_dir, static_dir
 from src.pages.shared import base_page
 from src.schemas import FirstElement, SelectForm
 
@@ -32,7 +32,7 @@ def first_form():
 
 
 UserListAdapter = TypeAdapter(dict[str, FirstElement])
-with open('src/data/first.json', encoding='UTF-8') as f:
+with open(f'{data_dir}/first.json', encoding='UTF-8') as f:
     first_elemets = json.load(f)
     first_data = UserListAdapter.validate_python(first_elemets)
     print(first_data)
@@ -47,9 +47,7 @@ async def generate_image(form: Annotated[SelectForm, fastui_form(SelectForm)]):
     plt.ylabel('Y Axis')
     plt.legend()
 
-    if not os.path.exists('static'):
-        os.makedirs('static')
-    path = 'src/static/generated_graph.png'
+    path = f'{static_dir}/generated_graph.png'
     plt.savefig(path)
     plt.close()
     element = first_data[form.material]

@@ -53,38 +53,5 @@ def base_page(
 
 ## ----------------first--------------------
 
-UserListAdapter = TypeAdapter(dict[str, FirstElement])
-with open(f'{data_dir}/data_1.json', encoding='UTF-8') as f:
-    first_elemets = json.load(f)
-    first_data = UserListAdapter.validate_python(first_elemets['data'])
-    # print(first_data)
-
-keys = list(first_data.keys())
-
-variations = []
-for material, info in first_data.items():
-    v = [f'{material} [{tol.name}]' for tol in info.tol]
-    variations.extend(v)
-
-materials = Literal[*keys]
-
-ChooseMaterialModel = create_model(
-    'ChooseMaterialModel',
-    material=(Literal[*variations], ...),
-)
-
-tols = {}
-for key in keys:
-    tols_names = [t.name for t in first_data[key].tol]
-    ChooseTolModel = create_model('ChooseTolModel', tol=(Literal[*tols_names], ...))
-    model = create_model('ChooseTolModel', tol=(Literal[*tols_names], ...))
-    tols[key] = model
-
-
-tols_dict = {}
-for material, info in first_data.items():
-    v = {tol.name: tol for tol in info.tol}
-    tols_dict.update({material: v})
-
 
 ## ----------------second--------------------

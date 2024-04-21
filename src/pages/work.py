@@ -4,7 +4,8 @@ from fastui import FastUI
 from fastui import components as c
 from fastui.events import PageEvent
 
-from src.pages.shared import ChooseMaterialModel, base_page
+from src.pages.shared import base_page
+from src.parser import ChooseMaterialModel, SecondKChooseModel
 
 router = APIRouter()
 
@@ -12,11 +13,34 @@ router = APIRouter()
 @router.get('/forms/first', response_model=FastUI, response_model_exclude_none=True)
 def first_form():
     return [
-        c.Heading(text='Введите параметры', level=3, class_name='pb-3'),
+        c.Heading(
+            text='Звукоизолирующая способность стен и перегородок акустичких конструкций и перекрытий',
+            level=2,
+            class_name='pb-3',
+        ),
+        c.Heading(text='Вид материала:', level=3, class_name='pb-3'),
         c.ModelForm(
             model=ChooseMaterialModel,
             display_mode='default',
             submit_url='/api/generator/generate_chart',
+            method='POST',
+        ),
+    ]
+
+
+@router.get('/forms/second', response_model=FastUI, response_model_exclude_none=True)
+def second_form():
+    return [
+        c.Heading(
+            text='Допустимые уровни шума на рабочих частотах',
+            level=2,
+            class_name='pb-3',
+        ),
+        c.Heading(text='Вид трудовой деятельности:', level=3, class_name='pb-3'),
+        c.ModelForm(
+            model=SecondKChooseModel,
+            display_mode='default',
+            submit_url='/api/generator/generate_graph',
             method='POST',
         ),
     ]
@@ -79,3 +103,5 @@ def form_content(kind):
     match kind:
         case 'first':
             return first_form()
+        case 'second':
+            return second_form()

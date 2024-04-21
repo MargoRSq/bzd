@@ -23,7 +23,7 @@ class Multiplier(str, enum.Enum):
 
 
 class FirstVariation(BaseModel):
-    name: str
+    name: Optional[str]
     weight: float = Field(default=1, serialization_alias='Вес, кг')
     d_63: int = Field(validation_alias='63Hz', serialization_alias='63 Гц')
     d_125: int = Field(validation_alias='125Hz', serialization_alias='125 Гц')
@@ -120,7 +120,7 @@ class SecondVariation(BaseModel):
 
 
 class HZVaritation(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
     weight: float = Field(default=1, serialization_alias='Кг/м2')
     d_63: int = Field(serialization_alias='63 Гц')
     d_125: int = Field(serialization_alias='125 Гц')

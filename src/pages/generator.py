@@ -41,10 +41,18 @@ def generate_first_image(name, tol: FirstVariation):
     plt.close()
 
 
-def generate_second_image(name, main_hz, shum: HZVaritation):
+def generate_second_image(name, main_hz: HZVaritation, shum: HZVaritation):
     plt.figure()
-    plt.plot([1, 2, 3], [1, 2, 3], label='Sample Data')
-    plt.title(name)
+    x_axis = main_hz.key_hzs
+    y_axis = np.array(shum.value_hzs) - np.array(main_hz.value_hzs)
+    print(y_axis)
+    plt.plot(range(len(x_axis)), y_axis, marker='o')
+
+    # Устанавливаем подписи по оси X в соответствии с фактическими значениями
+    plt.xticks(range(len(x_axis)), x_axis)
+    plt.yticks(y_axis)
+    # plt.plot(x_axis, y_axis, label='Sample Data')
+    plt.grid(True)
     plt.xlabel('X Axis')
     plt.ylabel('Y Axis')
     plt.legend()
@@ -150,7 +158,6 @@ async def generate_graph(
         c.Table(
             data=[main_hz],
             columns=[
-                DisplayLookup(field='Кг/м2'),
                 DisplayLookup(field='63 Гц'),
                 DisplayLookup(field='125 Гц'),
                 DisplayLookup(field='250 Гц'),
@@ -164,7 +171,6 @@ async def generate_graph(
         c.Table(
             data=[shum_hz],
             columns=[
-                DisplayLookup(field='Кг/м2'),
                 DisplayLookup(field='63 Гц'),
                 DisplayLookup(field='125 Гц'),
                 DisplayLookup(field='250 Гц'),
@@ -195,3 +201,15 @@ async def generate_graph(
         #     class_name='d-flex justify-content-center pt-3 ',
         # ),
     ]
+
+
+# # Значения по оси X (фактические)
+# x_values = [1, 3, 6, 10, 1000]
+
+# # Значения по оси Y
+# y_values = [2, 5, 7, 8, 10]
+
+# # Используем индексы для построения графика
+
+# # Показываем график
+# plt.show()

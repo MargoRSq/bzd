@@ -129,3 +129,22 @@ class HZVaritation(BaseModel):
     d_2000: int = Field(serialization_alias='2000 Гц')
     d_4000: int = Field(serialization_alias='4000 Гц')
     d_8000: int = Field(serialization_alias='8000 Гц')
+
+    @computed_field
+    @property
+    def value_hzs(self) -> list[int]:
+        return [
+            self.d_63,
+            self.d_125,
+            self.d_250,
+            self.d_500,
+            self.d_1000,
+            self.d_2000,
+            self.d_4000,
+            self.d_8000,
+        ]
+
+    @computed_field
+    @property
+    def key_hzs(self) -> list[int]:
+        return [63, 125, 250, 500, 1000, 2000, 4000, 8000]

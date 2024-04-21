@@ -1,8 +1,15 @@
 from __future__ import annotations as _annotations
 
+import json
+from typing import Literal
+
 from fastui import AnyComponent
 from fastui import components as c
 from fastui.events import GoToEvent
+from pydantic import TypeAdapter, create_model
+
+from src import data_dir
+from src.schemas import FirstElement
 
 
 def base_page(
@@ -42,3 +49,42 @@ def base_page(
             ],
         ),
     ]
+
+
+## ----------------first--------------------
+
+UserListAdapter = TypeAdapter(dict[str, FirstElement])
+with open(f'{data_dir}/data_1.json', encoding='UTF-8') as f:
+    first_elemets = json.load(f)
+    first_data = UserListAdapter.validate_python(first_elemets['data'])
+    # print(first_data)
+
+keys = list(first_data.keys())
+
+variations = []
+for material, info in first_data.items():
+    v = [f'{material} [{tol.name}]' for tol in info.tol]
+    variations.extend(v)
+
+materials = Literal[*keys]
+
+ChooseMaterialModel = create_model(
+    'ChooseMaterialModel',
+    material=(Literal[*variations], ...),
+)
+
+tols = {}
+for key in keys:
+    tols_names = [t.name for t in first_data[key].tol]
+    ChooseTolModel = create_model('ChooseTolModel', tol=(Literal[*tols_names], ...))
+    model = create_model('ChooseTolModel', tol=(Literal[*tols_names], ...))
+    tols[key] = model
+
+
+tols_dict = {}
+for material, info in first_data.items():
+    v = {tol.name: tol for tol in info.tol}
+    tols_dict.update({material: v})
+
+
+## ----------------second--------------------

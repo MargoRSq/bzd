@@ -1,5 +1,5 @@
 import enum
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 
@@ -120,6 +120,7 @@ class SecondVariation(BaseModel):
 
 
 class HZVaritation(BaseModel):
+    name: Optional[str]
     weight: float = Field(default=1, serialization_alias='Кг/м2')
     d_63: int = Field(serialization_alias='63 Гц')
     d_125: int = Field(serialization_alias='125 Гц')
@@ -148,3 +149,7 @@ class HZVaritation(BaseModel):
     @property
     def key_hzs(self) -> list[int]:
         return [63, 125, 250, 500, 1000, 2000, 4000, 8000]
+
+
+class ThirdVariation(BaseModel):
+    uplot: list[HZVaritation]

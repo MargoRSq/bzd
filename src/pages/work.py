@@ -3,9 +3,10 @@ from fastapi.responses import RedirectResponse
 from fastui import FastUI
 from fastui import components as c
 from fastui.events import PageEvent
+from pydantic import BaseModel, Field
 
 from src.pages.shared import base_page
-from src.parser import ChooseMaterialModel, SecondKChooseModel
+from src.parser import ChooseMaterialModel, SecondKChooseModel, ThirdChooseModel
 
 router = APIRouter()
 
@@ -41,6 +42,32 @@ def second_form():
             model=SecondKChooseModel,
             display_mode='default',
             submit_url='/api/generator/generate_graph',
+            method='POST',
+        ),
+    ]
+
+
+class ThirdForm(BaseModel):
+    ssum: float = Field(default=1, alias='S')
+    lp: int = Field(default=85, alias=' Lp [от 85 до 120]', ge=85, le=120)
+    r: int = Field(default=1, alias=' r [от 1 до 10]', ge=1, le=10)
+    at: str = Field(default='0.1')
+    конструкция: ThirdChooseModel
+
+
+@router.get('/forms/third', response_model=FastUI, response_model_exclude_none=True)
+def third_form():
+    return [
+        c.Heading(
+            text='Допустимые уровни шума на рабочих частотах',
+            level=2,
+            class_name='pb-3',
+        ),
+        c.Heading(text='Вид трудовой деятельности:', level=3, class_name='pb-3'),
+        c.ModelForm(
+            model=ThirdForm,
+            display_mode='default',
+            submit_url='/api/generator/generate_table',
             method='POST',
         ),
     ]
@@ -105,3 +132,5 @@ def form_content(kind):
             return first_form()
         case 'second':
             return second_form()
+        case 'third':
+            return third_form()

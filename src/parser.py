@@ -4,13 +4,12 @@ import json
 from typing import Literal
 
 from pydantic import TypeAdapter, create_model
-from rich import print
 
 from src import data_dir
-from src.schemas import FirstElement, SecondVariation
+from src.schemas import FirstElement, SecondVariation, ThirdVariation
 
 FirstElementsAdapter = TypeAdapter(dict[str, FirstElement])
-with open(f'{data_dir}/data_1.json', encoding='UTF-8') as f:
+with open(f'{data_dir}/first.json', encoding='UTF-8') as f:
     first_elemets = json.load(f)
     first_data = FirstElementsAdapter.validate_python(first_elemets['data'])
 
@@ -47,12 +46,33 @@ with open(f'{data_dir}/second.json', encoding='UTF-8') as f:
     second_elements = json.load(f)
     second_data = SecondElementsAdapter.validate_python(second_elements['data'])
 
-# print(second_data)
 
 kinds = Literal[*list(second_data.keys())]
-print(kinds, variations)
 
 SecondKChooseModel = create_model(
     'SecondKChooseModel',
     Вид=(kinds, ...),
 )
+
+ThirdElementsAdapter = TypeAdapter(dict[str, ThirdVariation])
+with open(f'{data_dir}/third.json', encoding='UTF-8') as f:
+    third_elements = json.load(f)
+    third_data = ThirdElementsAdapter.validate_python(third_elements['data'])
+
+
+objects_variations = []
+for material, info in third_data.items():
+    v = [f'{material} [{uplot.name}]' for uplot in info.uplot]
+    objects_variations.extend(v)
+
+objects = Literal[*list(objects_variations)]
+
+ThirdChooseModel = create_model(
+    'Конструкция',
+    тип=(objects, ...),
+)
+
+objects_dict = {}
+for material, info in third_data.items():
+    v = {uplot.name: uplot for uplot in info.uplot}
+    objects_dict.update({material: v})

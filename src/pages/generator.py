@@ -10,10 +10,12 @@ from fastui.forms import fastui_form
 from matplotlib import pyplot as plt
 
 from src import static_dir
+from src.pages.work import ThirdForm
 from src.parser import (
     ChooseMaterialModel,
     SecondKChooseModel,
     first_data,
+    objects_dict,
     second_data,
     tols_dict,
 )
@@ -48,7 +50,6 @@ def generate_second_image(name, main_hz: HZVaritation, shum: HZVaritation):
     print(y_axis)
     plt.plot(range(len(x_axis)), y_axis, marker='o')
 
-    # Устанавливаем подписи по оси X в соответствии с фактическими значениями
     plt.xticks(range(len(x_axis)), x_axis)
     plt.yticks(y_axis)
     # plt.plot(x_axis, y_axis, label='Sample Data')
@@ -203,13 +204,28 @@ async def generate_graph(
     ]
 
 
-# # Значения по оси X (фактические)
-# x_values = [1, 3, 6, 10, 1000]
-
-# # Значения по оси Y
-# y_values = [2, 5, 7, 8, 10]
-
-# # Используем индексы для построения графика
-
-# # Показываем график
-# plt.show()
+@router.post('/generate_table', response_model=FastUI, response_model_exclude_none=True)
+async def generate_table(
+    form: Annotated[ThirdForm, fastui_form(ThirdForm)],
+):
+    print(form)
+    sp = form.конструкция.тип.split('[')
+    object, uplot = sp[0][:-1], sp[1][:-1]
+    print(object, uplot)
+    input_table = objects_dict[object][uplot]
+    return [
+        c.Heading(text=form.конструкция.тип, level=2),
+        c.Table(
+            data=[input_table],
+            columns=[
+                DisplayLookup(field='63 Гц'),
+                DisplayLookup(field='125 Гц'),
+                DisplayLookup(field='250 Гц'),
+                DisplayLookup(field='500 Гц'),
+                DisplayLookup(field='1000 Гц'),
+                DisplayLookup(field='2000 Гц'),
+                DisplayLookup(field='4000 Гц'),
+                DisplayLookup(field='8000 Гц'),
+            ],
+        ),
+    ]

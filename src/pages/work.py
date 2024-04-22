@@ -5,7 +5,7 @@ from fastui import components as c
 from fastui.events import PageEvent
 from pydantic import BaseModel, Field
 
-from src.pages.shared import base_page
+from src.pages.shared import base_page, centered_div
 from src.parser import ChooseMaterialModel, SecondKChooseModel, ThirdChooseModel
 
 router = APIRouter()
@@ -16,10 +16,11 @@ def first_form():
     return [
         c.Heading(
             text='Звукоизолирующая способность стен и перегородок акустичких конструкций и перекрытий',
-            level=2,
+            level=3,
             class_name='pb-3',
         ),
-        c.Heading(text='Вид материала:', level=3, class_name='pb-3'),
+        centered_div(c.Image(src='/static/kir.png')),
+        # c.Heading(text='Вид материала:', level=3, class_name='pb-3'),
         c.ModelForm(
             model=ChooseMaterialModel,
             display_mode='default',
@@ -34,10 +35,17 @@ def second_form():
     return [
         c.Heading(
             text='Допустимые уровни шума на рабочих частотах',
-            level=2,
+            level=3,
             class_name='pb-3',
         ),
-        c.Heading(text='Вид трудовой деятельности:', level=3, class_name='pb-3'),
+        centered_div(c.Image(src='/static/komn.png')),
+        centered_div(
+            c.Heading(
+                text='Вид трудовой деятельности',
+                level=3,
+                class_name='border-bottom pt-3 pb-1 mb-3',
+            )
+        ),
         c.ModelForm(
             model=SecondKChooseModel,
             display_mode='default',
@@ -48,10 +56,12 @@ def second_form():
 
 
 class ThirdForm(BaseModel):
-    ssum: float = Field(default=1, alias='S')
-    lp: int = Field(default=85, alias=' Lp [от 85 до 120]', ge=85, le=120)
-    r: int = Field(default=1, alias=' r [от 1 до 10]', ge=1, le=10)
-    at: str = Field(default='0.1')
+    s: float = Field(default=1, alias='S')
+    lp: int = Field(default=85, alias='Lp [от 85 до 120]', ge=85, le=120)
+    r: int = Field(default=1, alias='r [от 1 до 10]', ge=1, le=10)
+    alpha: str = Field(
+        default='0.1', 
+    )
     конструкция: ThirdChooseModel
 
 
@@ -59,11 +69,16 @@ class ThirdForm(BaseModel):
 def third_form():
     return [
         c.Heading(
-            text='Допустимые уровни шума на рабочих частотах',
-            level=2,
+            text='Звукоизолирующая способность дверей и окон, Дб',
+            level=3,
             class_name='pb-3',
         ),
-        c.Heading(text='Вид трудовой деятельности:', level=3, class_name='pb-3'),
+        c.Div(
+            components=[
+                c.Image(src='/static/third_formulas.png', width='50%'),
+                c.Image(src='/static/third.png', width='50%'),
+            ]
+        ),
         c.ModelForm(
             model=ThirdForm,
             display_mode='default',

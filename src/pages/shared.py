@@ -1,15 +1,8 @@
 from __future__ import annotations as _annotations
 
-import json
-from typing import Literal
-
 from fastui import AnyComponent
 from fastui import components as c
 from fastui.events import GoToEvent
-from pydantic import TypeAdapter, create_model
-
-from src import data_dir
-from src.schemas import FirstElement
 
 
 def base_page(
@@ -19,7 +12,7 @@ def base_page(
         c.PageTitle(text='ЛР №3Э'),
         c.Navbar(
             title='ЛР №3Э',
-            title_event=GoToEvent(url='/materials'),
+            title_event=GoToEvent(url='/materials/materials'),
             start_links=[
                 c.Link(
                     components=[c.Text(text='Теоритические материалы')],
@@ -51,7 +44,5 @@ def base_page(
     ]
 
 
-## ----------------first--------------------
-
-
-## ----------------second--------------------
+def centered_div(*components):
+    return c.Div(components=[*components], class_name='d-flex justify-content-center')

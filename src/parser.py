@@ -24,7 +24,7 @@ for material, info in first_data.items():
 
 ChooseMaterialModel = create_model(
     'ChooseMaterialModel',
-    material=(Literal[*variations], ...),
+    Материал=(Literal[*variations], ...),
 )
 
 tols = {}

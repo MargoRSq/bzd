@@ -10,11 +10,11 @@ from fastui.forms import fastui_form
 from matplotlib import pyplot as plt
 
 from src import static_dir
+from src.pages.shared import centered_div
 from src.pages.work import ThirdForm
 from src.parser import (
     ChooseMaterialModel,
     SecondKChooseModel,
-    first_data,
     objects_dict,
     second_data,
     tols_dict,
@@ -28,15 +28,13 @@ router = APIRouter()
 async def generate_image(
     form: Annotated[ChooseMaterialModel, fastui_form(ChooseMaterialModel)],
 ):
-    sp = form.material.split('[')
+    sp = form.Материал.split('[')
     material, tol = sp[0][:-1], sp[1][:-1]
-    print(material, tol)
-    element = first_data[material].tol[0]
     element = tols_dict[material][tol]
-    mat_element = first_data[material]
-    generate_first_image(form.material, element)
+    generate_first_image(form.Материал, element)
 
     return [
+        c.Heading(text=form.Материал, level=3, class_name='pb-3'),
         c.Table(
             data=[element],
             columns=[
@@ -51,25 +49,7 @@ async def generate_image(
                 DisplayLookup(field='8000 Гц'),
             ],
         ),
-        c.Div(
-            components=[
-                c.Image(
-                    src=f'/static/{mat_element.img_name}',
-                    width='50%',
-                ),
-                c.Image(src=f'/static/{form.material}.png', width='50%'),
-            ],
-        ),
-        # c.Button(
-        #     text='Обратно',
-        #     on_click=PageEvent(
-        #         name='change-form', context={'kind': 'first'}, clear=True
-        #     ),
-        # ),
-        # c.Div(
-        #     components=[],
-        #     class_name='d-flex justify-content-center pt-3 ',
-        # ),
+        centered_div(c.Image(src=f'/static/{form.Материал}.png')),
     ]
 
 
@@ -77,13 +57,6 @@ async def generate_image(
 async def generate_graph(
     form: Annotated[SecondKChooseModel, fastui_form(SecondKChooseModel)],
 ):
-    # sp = form.material.split('[')
-    # material, tol = sp[0][:-1], sp[1][:-1]
-    # print(material, tol)
-    # element = first_data[material].tol[0]
-    # element = tols_dict[material][tol]
-    # mat_element = first_data[material]
-
     element = second_data[form.Вид]
     main_hz = HZVaritation(
         weight=element.weight,
@@ -113,53 +86,52 @@ async def generate_graph(
         c.Heading(text=form.Вид, level=3, class_name='mt-3'),
         c.Table(
             data=[main_hz],
-            columns=[DisplayLookup(field='Кг/м2', title='Отношение Кг/м2')],
+            columns=[DisplayLookup(field='Кг/м2', title='кг/м2')],
         ),
-        c.Table(
-            data=[main_hz],
-            columns=[
-                DisplayLookup(field='63 Гц'),
-                DisplayLookup(field='125 Гц'),
-                DisplayLookup(field='250 Гц'),
-                DisplayLookup(field='500 Гц'),
-                DisplayLookup(field='1000 Гц'),
-                DisplayLookup(field='2000 Гц'),
-                DisplayLookup(field='4000 Гц'),
-                DisplayLookup(field='8000 Гц'),
-            ],
-        ),
-        c.Table(
-            data=[shum_hz],
-            columns=[
-                DisplayLookup(field='63 Гц'),
-                DisplayLookup(field='125 Гц'),
-                DisplayLookup(field='250 Гц'),
-                DisplayLookup(field='500 Гц'),
-                DisplayLookup(field='1000 Гц'),
-                DisplayLookup(field='2000 Гц'),
-                DisplayLookup(field='4000 Гц'),
-                DisplayLookup(field='8000 Гц'),
-            ],
+        centered_div(
+            c.Heading(
+                text='Среднегеометрические частоты октавных полос',
+                level=2,
+                class_name='mb-3',
+            )
         ),
         c.Div(
             components=[
-                c.Image(
-                    src='/static/komn.png',
-                    width='50%',
+                c.Heading(text='L шумн (шумное помещение)', level=3),
+                c.Table(
+                    data=[main_hz],
+                    columns=[
+                        DisplayLookup(field='63 Гц'),
+                        DisplayLookup(field='125 Гц'),
+                        DisplayLookup(field='250 Гц'),
+                        DisplayLookup(field='500 Гц'),
+                        DisplayLookup(field='1000 Гц'),
+                        DisplayLookup(field='2000 Гц'),
+                        DisplayLookup(field='4000 Гц'),
+                        DisplayLookup(field='8000 Гц'),
+                    ],
                 ),
-                c.Image(src=f'/static/{form.Вид}.png', width='50%'),
-            ],
+            ]
         ),
-        # c.Button(
-        #     text='Обратно',
-        #     on_click=PageEvent(
-        #         name='change-form', context={'kind': 'first'}, clear=True
-        #     ),
-        # ),
-        # c.Div(
-        #     components=[],
-        #     class_name='d-flex justify-content-center pt-3 ',
-        # ),
+        c.Div(
+            components=[
+                c.Heading(text='L допустимое (тихое помещение)', level=3),
+                c.Table(
+                    data=[shum_hz],
+                    columns=[
+                        DisplayLookup(field='63 Гц'),
+                        DisplayLookup(field='125 Гц'),
+                        DisplayLookup(field='250 Гц'),
+                        DisplayLookup(field='500 Гц'),
+                        DisplayLookup(field='1000 Гц'),
+                        DisplayLookup(field='2000 Гц'),
+                        DisplayLookup(field='4000 Гц'),
+                        DisplayLookup(field='8000 Гц'),
+                    ],
+                ),
+            ]
+        ),
+        centered_div(c.Image(src=f'/static/{form.Вид}.png', width='50%')),
     ]
 
 
@@ -167,14 +139,36 @@ async def generate_graph(
 async def generate_table(
     form: Annotated[ThirdForm, fastui_form(ThirdForm)],
 ):
-    print(form)
     sp = form.конструкция.тип.split('[')
     object, uplot = sp[0][:-1], sp[1][:-1]
-    print(object, uplot)
     input_table = objects_dict[object][uplot]
     output = generate_third_table(input_table, form)
     return [
-        c.Heading(text=form.конструкция.тип, level=2),
+        c.Heading(text=form.конструкция.тип, level=3),
+        c.Table(
+            data=[form],
+            columns=[
+                DisplayLookup(field='S'),
+                DisplayLookup(field='Lp [от 85 до 120]', title='Lp'),
+                DisplayLookup(field='r [от 1 до 10]', title='r'),
+                DisplayLookup(field='alpha', title='α'),
+            ],
+        ),
+        c.Heading(text='Lдоп (допустимое)', level=3, class_name='pt-3'),
+        c.Table(
+            data=[output],
+            columns=[
+                DisplayLookup(field='63 Гц'),
+                DisplayLookup(field='125 Гц'),
+                DisplayLookup(field='250 Гц'),
+                DisplayLookup(field='500 Гц'),
+                DisplayLookup(field='1000 Гц'),
+                DisplayLookup(field='2000 Гц'),
+                DisplayLookup(field='4000 Гц'),
+                DisplayLookup(field='8000 Гц'),
+            ],
+        ),
+        c.Heading(text='Lзи треб (требуемая звукоизоляция)', level=3),
         c.Table(
             data=[output],
             columns=[
@@ -192,12 +186,11 @@ async def generate_table(
 
 
 def generate_first_image(name, tol: FirstVariation):
-    print(name, tol)
     number_pattern = re.search(r'[-+]?[0-9]*\.?[0-9]+', tol.name)
     number = float(number_pattern.group())
     y_axis = [13.8 * np.log10(x) * tol.weight * number for x in tol.x_axis]
     plt.figure()
-    plt.plot(tol.x_axis, y_axis, label='Sample Data')
+    plt.plot(tol.x_axis, y_axis, label='ЗИ = 13.8 * lg(m)')
     plt.title(name)
     plt.xlabel('X Axis')
     plt.ylabel('Y Axis')
@@ -215,14 +208,11 @@ def generate_second_image(name, main_hz: HZVaritation, shum: HZVaritation):
     x_axis = main_hz.key_hzs
     y_axis = np.array(shum.value_hzs) - np.array(main_hz.value_hzs)
     print(y_axis)
-    plt.plot(range(len(x_axis)), y_axis, marker='o')
+    plt.plot(range(len(x_axis)), y_axis, marker='o', label='dL, Lшумн - Lдоп')
 
     plt.xticks(range(len(x_axis)), x_axis)
     plt.yticks(y_axis)
-    # plt.plot(x_axis, y_axis, label='Sample Data')
     plt.grid(True)
-    plt.xlabel('X Axis')
-    plt.ylabel('Y Axis')
     plt.legend()
 
     path = f'{static_dir}/{name}.png'
@@ -233,8 +223,8 @@ def generate_second_image(name, main_hz: HZVaritation, shum: HZVaritation):
 
 
 def generate_third_table(input_data, form_data: ThirdForm):
-    at = float(form_data.at)
-    b = (at * form_data.ssum) * (1 - at)
+    at = float(form_data.alpha)
+    b = (at * form_data.s) * (1 - at)
     lshum = form_data.lp - 20 * np.log10(form_data.r) - 20 * np.log10(b) + 6
     return HZVaritationFloats(
         d_63=lshum - input_data.d_63,

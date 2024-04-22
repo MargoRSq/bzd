@@ -60,7 +60,7 @@ class ThirdForm(BaseModel):
     lp: int = Field(default=85, alias='Lp [от 85 до 120]', ge=85, le=120)
     r: int = Field(default=1, alias='r [от 1 до 10]', ge=1, le=10)
     alpha: str = Field(
-        default='0.1', 
+        default='0.1',
     )
     конструкция: ThirdChooseModel
 

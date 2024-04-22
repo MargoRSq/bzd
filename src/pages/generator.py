@@ -156,7 +156,7 @@ async def generate_table(
         ),
         c.Heading(text='Lдоп (допустимое)', level=3, class_name='pt-3'),
         c.Table(
-            data=[output],
+            data=[input_table],
             columns=[
                 DisplayLookup(field='63 Гц'),
                 DisplayLookup(field='125 Гц'),
@@ -192,8 +192,8 @@ def generate_first_image(name, tol: FirstVariation):
     plt.figure()
     plt.plot(tol.x_axis, y_axis, label='ЗИ = 13.8 * lg(m)')
     plt.title(name)
-    plt.xlabel('X Axis')
-    plt.ylabel('Y Axis')
+    plt.xlabel('Частота, Гц')
+    plt.ylabel('Звукоизоляция, Дб')
     plt.legend()
 
     path = f'{static_dir}/{name}.png'
@@ -204,12 +204,12 @@ def generate_first_image(name, tol: FirstVariation):
 
 
 def generate_second_image(name, main_hz: HZVaritation, shum: HZVaritation):
-    plt.figure()
     x_axis = main_hz.key_hzs
     y_axis = np.array(shum.value_hzs) - np.array(main_hz.value_hzs)
-    print(y_axis)
-    plt.plot(range(len(x_axis)), y_axis, marker='o', label='dL, Lшумн - Lдоп')
 
+    plt.figure()
+    plt.plot(range(len(x_axis)), y_axis, marker='o', label='dL, Lшумн - Lдоп')
+    plt.xlabel('Частота, Гц')
     plt.xticks(range(len(x_axis)), x_axis)
     plt.yticks(y_axis)
     plt.grid(True)

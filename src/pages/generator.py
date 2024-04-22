@@ -19,50 +19,9 @@ from src.parser import (
     second_data,
     tols_dict,
 )
-from src.schemas import FirstVariation, HZVaritation
+from src.schemas import FirstVariation, HZVaritation, HZVaritationFloats
 
 router = APIRouter()
-
-
-def generate_first_image(name, tol: FirstVariation):
-    print(name, tol)
-    number_pattern = re.search(r'[-+]?[0-9]*\.?[0-9]+', tol.name)
-    number = float(number_pattern.group())
-    y_axis = [13.8 * np.log10(x) * tol.weight * number for x in tol.x_axis]
-    plt.figure()
-    plt.plot(tol.x_axis, y_axis, label='Sample Data')
-    plt.title(name)
-    plt.xlabel('X Axis')
-    plt.ylabel('Y Axis')
-    plt.legend()
-
-    path = f'{static_dir}/{name}.png'
-    with open(path, mode='w') as f:
-        f.write('1')
-    plt.savefig(path)
-    plt.close()
-
-
-def generate_second_image(name, main_hz: HZVaritation, shum: HZVaritation):
-    plt.figure()
-    x_axis = main_hz.key_hzs
-    y_axis = np.array(shum.value_hzs) - np.array(main_hz.value_hzs)
-    print(y_axis)
-    plt.plot(range(len(x_axis)), y_axis, marker='o')
-
-    plt.xticks(range(len(x_axis)), x_axis)
-    plt.yticks(y_axis)
-    # plt.plot(x_axis, y_axis, label='Sample Data')
-    plt.grid(True)
-    plt.xlabel('X Axis')
-    plt.ylabel('Y Axis')
-    plt.legend()
-
-    path = f'{static_dir}/{name}.png'
-    with open(path, mode='w') as f:
-        f.write('1')
-    plt.savefig(path)
-    plt.close()
 
 
 @router.post('/generate_chart', response_model=FastUI, response_model_exclude_none=True)
@@ -213,10 +172,11 @@ async def generate_table(
     object, uplot = sp[0][:-1], sp[1][:-1]
     print(object, uplot)
     input_table = objects_dict[object][uplot]
+    output = generate_third_table(input_table, form)
     return [
         c.Heading(text=form.конструкция.тип, level=2),
         c.Table(
-            data=[input_table],
+            data=[output],
             columns=[
                 DisplayLookup(field='63 Гц'),
                 DisplayLookup(field='125 Гц'),
@@ -229,3 +189,60 @@ async def generate_table(
             ],
         ),
     ]
+
+
+def generate_first_image(name, tol: FirstVariation):
+    print(name, tol)
+    number_pattern = re.search(r'[-+]?[0-9]*\.?[0-9]+', tol.name)
+    number = float(number_pattern.group())
+    y_axis = [13.8 * np.log10(x) * tol.weight * number for x in tol.x_axis]
+    plt.figure()
+    plt.plot(tol.x_axis, y_axis, label='Sample Data')
+    plt.title(name)
+    plt.xlabel('X Axis')
+    plt.ylabel('Y Axis')
+    plt.legend()
+
+    path = f'{static_dir}/{name}.png'
+    with open(path, mode='w') as f:
+        f.write('1')
+    plt.savefig(path)
+    plt.close()
+
+
+def generate_second_image(name, main_hz: HZVaritation, shum: HZVaritation):
+    plt.figure()
+    x_axis = main_hz.key_hzs
+    y_axis = np.array(shum.value_hzs) - np.array(main_hz.value_hzs)
+    print(y_axis)
+    plt.plot(range(len(x_axis)), y_axis, marker='o')
+
+    plt.xticks(range(len(x_axis)), x_axis)
+    plt.yticks(y_axis)
+    # plt.plot(x_axis, y_axis, label='Sample Data')
+    plt.grid(True)
+    plt.xlabel('X Axis')
+    plt.ylabel('Y Axis')
+    plt.legend()
+
+    path = f'{static_dir}/{name}.png'
+    with open(path, mode='w') as f:
+        f.write('1')
+    plt.savefig(path)
+    plt.close()
+
+
+def generate_third_table(input_data, form_data: ThirdForm):
+    at = float(form_data.at)
+    b = (at * form_data.ssum) * (1 - at)
+    lshum = form_data.lp - 20 * np.log10(form_data.r) - 20 * np.log10(b) + 6
+    return HZVaritationFloats(
+        d_63=lshum - input_data.d_63,
+        d_125=lshum - input_data.d_125,
+        d_250=lshum - input_data.d_250,
+        d_500=lshum - input_data.d_500,
+        d_1000=lshum - input_data.d_1000,
+        d_2000=lshum - input_data.d_2000,
+        d_4000=lshum - input_data.d_4000,
+        d_8000=lshum - input_data.d_8000,
+    )

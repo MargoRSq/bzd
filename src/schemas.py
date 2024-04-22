@@ -153,3 +153,16 @@ class HZVaritation(BaseModel):
 
 class ThirdVariation(BaseModel):
     uplot: list[HZVaritation]
+
+
+class HZVaritationFloats(BaseModel):
+    name: Optional[str] = None
+    weight: float = Field(default=1, serialization_alias='Кг/м2')
+    d_63: float = Field(serialization_alias='63 Гц')
+    d_125: float = Field(serialization_alias='125 Гц')
+    d_250: float = Field(serialization_alias='250 Гц')
+    d_500: float = Field(serialization_alias='500 Гц')
+    d_1000: float = Field(serialization_alias='1000 Гц')
+    d_2000: float = Field(serialization_alias='2000 Гц')
+    d_4000: float = Field(serialization_alias='4000 Гц')
+    d_8000: float = Field(serialization_alias='8000 Гц')

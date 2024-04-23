@@ -152,6 +152,7 @@ async def generate_table(
                 DisplayLookup(field='Lp [от 85 до 120]', title='Lp'),
                 DisplayLookup(field='r [от 1 до 10]', title='r'),
                 DisplayLookup(field='alpha', title='α'),
+                DisplayLookup(field='alpha', title='α'),
             ],
         ),
         c.Heading(text='Lдоп (допустимое)', level=3, class_name='pt-3'),
@@ -188,12 +189,15 @@ async def generate_table(
 def generate_first_image(name, tol: FirstVariation):
     number_pattern = re.search(r'[-+]?[0-9]*\.?[0-9]+', tol.name)
     number = float(number_pattern.group())
-    y_axis = [13.8 * np.log10(x) * tol.weight * number for x in tol.x_axis]
+    x_axis = [63, 125, 250, 500, 1000, 2000, 4000, 8000]
+    y_axis = [13.8 * np.log10(x) for x in tol.x_axis]
     plt.figure()
-    plt.plot(tol.x_axis, y_axis, label='ЗИ = 13.8 * lg(m)')
+    plt.plot(range(len(x_axis)), y_axis, marker='o', label='ЗИ = 13.8 * lg(m)')
+    plt.xticks(range(len(x_axis)), x_axis)
     plt.title(name)
     plt.xlabel('Частота, Гц')
     plt.ylabel('Звукоизоляция, Дб')
+    plt.grid()
     plt.legend()
 
     path = f'{static_dir}/{name}.png'

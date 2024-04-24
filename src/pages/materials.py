@@ -24,5 +24,4 @@ def materials():
             ],
             class_name='border-top mt-3 pt-1',
         ),
-        # title="Исследование звукоизоляции ограждающих конструкций",
     )
